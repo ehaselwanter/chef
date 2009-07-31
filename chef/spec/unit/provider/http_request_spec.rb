@@ -51,6 +51,20 @@ describe Chef::Provider::HttpRequest, "load_current_resource" do
     Chef::REST.should_receive(:new).with(@new_resource.url)
     @provider.load_current_resource
   end
+
+  it "should set up a Chef::REST client" do
+    @new_resource = mock("Chef::Resource::HttpRequest",
+      :null_object => true,
+      :name => "adam",
+      :url => "http://www.opscode.com",
+      :message => "is cool",
+      :headers => {:host => "host"}
+    )
+    @provider = Chef::Provider::HttpRequest.new(@node, @new_resource)
+    Chef::REST.should_receive(:new).with(@new_resource.url,{:headers=>{:host=>"host"}})
+    @provider.load_current_resource
+  end
+
 end
 
 describe Chef::Provider::HttpRequest, "action_get" do  

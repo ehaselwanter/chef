@@ -42,5 +42,9 @@ describe Chef::Resource::HttpRequest do
     @resource.message "monkeybars"
     @resource.message.should eql("monkeybars")
   end
-  
+
+  it "should set headers to a hash" do
+    @resource.headers({:host => "host"})
+    @resource.headers.should == {:host => "host"}
+  end
 end

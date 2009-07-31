@@ -34,8 +34,9 @@ class Chef
     
     attr_accessor :url, :cookies
     
-    def initialize(url)
+    def initialize(url,options={})
       @url = url
+      @options = options unless options.empty?
       @cookies = CookieJar.instance
     end
     
@@ -66,9 +67,9 @@ class Chef
     def authenticate(user, pass)
       Chef::Log.debug("Authenticating #{user} via openid") 
       response = post_rest('openid/consumer/start', { 
-        "openid_identifier" => "#{Chef::Config[:openid_url]}/openid/server/node/#{user}",
-        "submit" => "Verify"
-      })
+          "openid_identifier" => "#{Chef::Config[:openid_url]}/openid/server/node/#{user}",
+          "submit" => "Verify"
+        })
       post_rest(
         "#{Chef::Config[:openid_url]}#{response["action"]}",
         { "password" => pass }
@@ -143,6 +144,12 @@ class Chef
       end
       if @cookies.has_key?("#{url.host}:#{url.port}")
         headers['Cookie'] = @cookies["#{url.host}:#{url.port}"]
+      end
+      if @options && @options.has_key?(:headers)
+        @options[:headers].each_pair do |key,value|
+          headers[key.to_s] = value.to_s
+          Chef::Log.debug("added #{key.to_s} = #{value.to_s} to headers")
+        end
       end
       req = nil
       case method

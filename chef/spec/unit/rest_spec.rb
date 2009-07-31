@@ -324,4 +324,12 @@ describe Chef::REST, "run_request method" do
     do_run_request(:GET, false, 10, false)
   end
 
+  it "should set the header for this request if one exists in the options hash" do
+    @r = Chef::REST.new("url", {:headers => { :host => "host.local"}})
+    Net::HTTP::Get.should_receive(:new).with("/?foo=bar",
+      { 'Accept' => 'application/json', 'host' => 'host.local' }
+    ).and_return(@request_mock)
+    do_run_request
+  end
+
 end

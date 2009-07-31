@@ -27,6 +27,7 @@ class Chef
         @resource_name = :http_request
         @message = name
         @url = nil
+        @headers = nil
         @action = :get
         @allowed_actions.push(:get, :put, :post, :delete, :head, :options)
       end
@@ -42,6 +43,14 @@ class Chef
       def message(args=nil)
         set_or_return(
           :message,
+          args,
+          :kind_of => Object
+        )
+      end
+
+      def headers(args=nil)
+        set_or_return(
+          :headers,
           args,
           :kind_of => Object
         )

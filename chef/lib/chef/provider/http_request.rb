@@ -25,7 +25,7 @@ class Chef
       attr_accessor :rest
       
       def load_current_resource
-        @rest = Chef::REST.new(@new_resource.url)
+        @rest = (@new_resource.headers.empty?)?Chef::REST.new(@new_resource.url):Chef::REST.new(@new_resource.url,Hash[:headers => @new_resource.headers])
       end
       
       # Send a GET request to @new_resource.url, with ?message=@new_resource.message
